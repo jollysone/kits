@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+
+    html, body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+    }
+
+    body {
+        font-family: -apple-system, "Helvetica Neue", Helvetica, sans-serif;
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+    #root {
+        height: 100%;
+    }
+
+    .draggable {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 32px;
+        width: 100%;
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+    }
+
+    h1 {
+        font-size: 20px;
+        margin: 0 0 16px 0;
+    }
+
+    a {
+        color: #106cc8;
+    }
+
+    .layout {
+        display: flex;
+        height: 100%;
+        flex-direction: row;
+        user-select: none;
+    }
+
+    .layout .sidebar {
+        position: relative;
+        width: 76px;
+        background: #4792ff;
+    }
+
+    .layout .mainbar {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        background: #f8f8f8;
+    }
+
+    .layout .mainbar .header {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        flex: 0 1 auto;
+        z-index: 2;
+        background: #fff;
+        height: 28px;
+        padding: 10px 20px 10px 10px;
+        box-shadow: 0 2px 3px rgba(57, 63, 72, 0.1);
+        color: #858b8f;
+        font-weight: 300;
+    }
+
+    .layout .mainbar .header .logobar {
+        display: none;
+        flex: 1;
+        line-height: 28px;
+        text-align: right;
+        font-size: 18px;
+        font-weight: 500;
+        color: #4792ff;
+    }
+
+    .layout .mainbar .body {
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        max-height: calc(100% - 48px);
+    }
+
+    .layout .mainbar .body .list {
+        width: 280px;
+        max-height: 100%;
+        overflow: auto;
+    }
+
+    .layout .mainbar .body .aside {
+        position: relative;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        background: #fff;
+        padding: 20px 40px;
+        border-left: 1px solid #eee;
+    }
+
+    .layout .mainbar .body .aside.shaded {
+        background: #fafafa;
+    }
+
+    [platform="darwin"] .layout .mainbar .header .logobar {
+        display: block;
+    }
+
+    .sidebar {
+        padding-top: 38px;
+    }
+
+    .sidebar .settings {
+        padding: 11px 0 3px;
+    }
+
+    .sidebar .add-button {
+        padding: 7px 0 7px 0;
+    }
+
+    .sidebar .add-button, .sidebar .settings {
+        width: 50px;
+        height: 36px;
+        margin: 0 auto 10px auto;
+        cursor: pointer;
+        text-align: center;
+        border-radius: 50%;
+        transition: background .2s ease;
+    }
+
+    .sidebar .add-button path, .sidebar .settings path {
+        fill: #fff;
+    }
+
+    .sidebar .add-button:hover, .sidebar .settings:hover {
+        background: #3889ff;
+    }
+
+    .sidebar .add-button {
+        color: #fff;
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 42px;
+    }
+
+    .sidebar .settings {
+        position: absolute;
+        bottom: 0px;
+        left: 12px;
+    }
+
+    .sidebar .settings > svg {
+        margin-top: 4px;
+    }
+
+    .sidebar .settings > svg path {
+        fill: #fff;
+    }
+
+    .sidebar .settings .dropdown {
+        bottom: 46px;
+        left: 20px;
+    }
+
+    .sidebar .switcher .item {
+        height: 53px;
+        text-align: center;
+        transition: background .2s ease;
+    }
+
+    .sidebar .switcher .item:hover {
+        background: #3d8cff;
+    }
+
+    .sidebar .switcher .item.current {
+        background: #266df5;
+    }
+
+    .sidebar .switcher .item svg {
+        margin-top: 12px;
+    }
+
+    .sidebar .switcher .item svg path {
+        fill: #fff;
+    }
+
+    .lock-screen {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        user-select: none;
+        background: #f8f8f8;
+    }
+
+    .lock-screen .top-lock, .lock-screen .bottom-lock {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .lock-screen .top-lock {
+        height: 50%;
+        display: flex;
+        border-bottom: 1px solid #3081c6;
+    }
+
+    .lock-screen .bottom-lock {
+        height: 50%;
+        flex-direction: column;
+        background: #4792ff;
+    }
+
+    .top-lock svg path {
+        fill: #333;
+    }
+
+    .top-lock h2 {
+        color: #333;
+    }
+
+    .bottom-lock {
+        color: #fff;
+    }
+
+    .bottom-lock svg path {
+        fill: #fff;
+    }
+
+    .bottom-lock .button {
+        background: #fff;
+        color: #333;
+    }
+
+    .instructions {
+        margin: 0 45px;
+        text-align: center;
+    }
+
+    .step {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 52px;
+    }
+
+    .search {
+        position: relative;
+        width: 230px;
+    }
+
+    .search svg {
+        position: absolute;
+        top: 8px;
+        left: 0;
+    }
+
+    .search svg path {
+        fill: #777;
+    }
+
+    .search input {
+        outline: none;
+        font-size: 15px;
+        border: none;
+        width: 100%;
+        padding: 7px 5px 3px 25px;
+        font-weight: 300;
+    }
+
+    .list .empty {
+        text-align: center;
+        padding: 30px 0;
+        color: #999;
+    }
+
+    .aside .empty {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .aside .empty img {
+        width: 300px;
+    }
+
+    .aside .empty p {
+        color: #777;
+    }
+
+    .entry {
+        display: flex;
+        flex-direction: row;
+        padding: 8px 10px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        min-height: 52px;
+        box-sizing: border-box;
+        transition: background .2s ease;
+    }
+
+    .entry .icon {
+        width: 32px;
+        margin-right: 10px;
+    }
+
+    .entry .icon.web {
+        width: 32px;
+        height: 32px;
+    }
+
+    .entry .icon.web path, .entry .icon.web circle {
+        /*fill: #0e336a;*/
+    }
+
+    .entry .description, .entry .icon {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .entry .description {
+        flex: 1;
+    }
+
+    .entry .primary {
+        font-weight: 500;
+        max-width: 215px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .entry .secondary {
+        color: #777;
+    }
+
+    .entry.current {
+        background: #f7f8fa;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 20px;
+    }
+
+    .field label {
+        width: 80px;
+        display: block;
+        font-size: 14px;
+        text-align: right;
+        color: #777;
+        padding: 5px 20px 0 0;
+    }
+
+    .field input, .field textarea {
+        flex: 1;
+        display: block;
+        width: 100%;
+        font-size: 14px;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        box-sizing: border-box;
+        outline: none;
+        transition: border .3s ease;
+    }
+
+    .field input:focus, .field textarea:focus {
+        border: 1px solid #4792ff;
+    }
+
+    .field .value {
+        flex: 1;
+    }
+
+    .field .wrapper {
+        margin-bottom: 3px;
+    }
+
+    .field .action {
+        font-size: 12px;
+        color: #106cc8;
+        float: right;
+        cursor: pointer;
+    }
+
+    .field .action:hover {
+        color: #0e62b5;
+    }
+
+    .field.secure-on, .field.secure-off {
+        position: relative;
+    }
+
+    .field.secure-on svg, .field.secure-off svg {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+    .field.secure-on svg path, .field.secure-off svg path {
+        fill: #777;
+    }
+
+    .field.secure-on svg:hover path, .field.secure-off svg:hover path {
+        fill: #333;
+    }
+
+    .field.secure-on svg.hide {
+        display: none;
+    }
+
+    .field.secure-on input {
+        -webkit-text-security: disc;
+    }
+
+    .field.secure-off svg.view {
+        display: none;
+    }
+
+    .field.error input, .field.error textarea {
+        border: 1px solid #f44336;
+    }
+
+    .actions {
+        text-align: right;
+    }
+
+    .actions .button {
+        margin-left: 10px;
+    }
+
+    .actions .cancel {
+        color: #106cc8;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .actions .cancel:hover {
+        color: #0e62b5;
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        width: 250px;
+        height: 5px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.8;
+        transition: opacity .1s;
+    }
+
+    .slider:hover {
+        opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 2px;
+        background: #4792ff;
+        cursor: pointer;
+    }
+
+    .button {
+        position: relative;
+        display: inline-block;
+        background: #4792ff;
+        box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        padding: 10px 20px;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: box-shadow .1s ease;
+    }
+
+    .button:hover {
+        box-shadow: 0 5px 4px -3px rgba(0, 0, 0, 0.2), 0 3px 5px 1px rgba(0, 0, 0, 0.14), 0 3px 5px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .button:active {
+        box-shadow: none;
+    }
+
+    .button.loading {
+        padding-right: 35px;
+        transition: padding .3s ease;
+    }
+
+    .button.loading::after {
+        position: absolute;
+        right: 10px;
+        content: '';
+        display: inline-block;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        border-top: 2px solid rgba(71, 146, 255, 0.3);
+        border-right: 2px solid rgba(71, 146, 255, 0.3);
+        border-bottom: 2px solid rgba(71, 146, 255, 0.3);
+        border-left: 2px solid rgba(71, 146, 255, 0.7);
+        transform: translateZ(0);
+        animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0);
+            animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+        }
+        50% {
+            transform: rotate(180deg);
+            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .entry-title {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .entry-title .action {
+        width: 16px;
+        height: 16px;
+        margin: 5px 0 0 10px;
+        cursor: pointer;
+    }
+
+    .entry-title .action path {
+        transition: fill .3s ease;
+        fill: #aaa;
+    }
+
+    .entry-title .action:hover path {
+        fill: #777;
+    }
+
+    .entry-title h1 {
+        flex: 1;
+    }
+
+    .entry-details {
+        background: #fff;
+        border: 1px solid #ebedf2;
+        border-radius: 5px;
+    }
+
+    .entry-details .item, .entry-extra .item {
+        display: flex;
+        flex-direction: row;
+        padding: 12px 10px;
+        border-bottom: 1px solid #ebedf2;
+        word-break: break-all;
+    }
+
+    .entry-details .item .label, .entry-extra .item .label {
+        width: 90px;
+        font-size: 14px;
+        text-align: right;
+        color: #777;
+        padding-right: 20px;
+    }
+
+    .entry-details .item .value, .entry-extra .item .value {
+        flex: 1;
+        padding-right: 8px;
+    }
+
+    .entry-details .item svg, .entry-extra .item svg {
+        cursor: pointer;
+    }
+
+    .entry-details .item svg path, .entry-extra .item svg path {
+        fill: #aaa;
+    }
+
+    .entry-details .item svg:hover path, .entry-extra .item svg:hover path {
+        fill: #777;
+    }
+
+    .entry-details .item:last-child, .entry-extra .item:last-child {
+        border: none;
+    }
+
+    .entry-details .item.secure .value, .entry-extra .item.secure .value {
+        -webkit-text-security: disc;
+    }
+
+    .entry-extra .item {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .entry-extra .item .value {
+        padding-top: 2px;
+        font-size: 12px;
+    }
+
+    .copied-notification {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        text-align: center;
+        padding: 8px 20px;
+        border-radius: 20px;
+        opacity: 1;
+        transition: opacity .7s ease;
+    }
+
+    .copied-notification.hidden {
+        opacity: 0;
+    }
+
+    .masterpass-input {
+        position: relative;
+    }
+
+    .masterpass-input input {
+        padding: 12px 20px;
+        border: 1px solid #3081c6;
+        min-width: 220px;
+        border-radius: 24px;
+        font-size: 15px;
+        outline: none;
+        text-align: center;
+        transition: border .2s ease;
+    }
+
+    .masterpass-input .error-message {
+        padding: 3px 0 0;
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        color: #e74c3c;
+    }
+
+    .masterpass-input .touchid {
+        position: absolute;
+        right: 8px;
+        top: 6px;
+        cursor: pointer;
+    }
+
+    .masterpass-input .touchid path {
+        fill: #F74B5D;
+    }
+
+    .masterpass-input .touchid.hover path {
+        fill: #D4123A;
+    }
+
+    .masterpass-input.error input {
+        border: 1px solid #e74c3c;
+    }
+
+    .modal {
+        position: fixed;
+        display: flex;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.2);
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal .window {
+        display: flex;
+        position: relative;
+        width: 100%;
+        top: 30px;
+        max-height: 80%;
+        max-width: 660px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 10px 0 rgba(98, 128, 134, 0.3);
+        background: #fff;
+        transform: translateY(-50px);
+        text-align: left;
+    }
+
+    .modal .window .centered {
+        width: 100%;
+        text-align: center;
+    }
+
+    .modal .window h1 {
+        font-size: 24px;
+        font-weight: 200;
+    }
+
+    .modal .window path {
+        fill: #888;
+    }
+
+    .modal .close {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+    }
+
+    .modal .close path {
+        fill: #aaa;
+    }
+
+    .modal .close img {
+        transition: opacity .2s ease;
+        max-width: 100%;
+        opacity: .6;
+    }
+
+    .modal .close:hover img {
+        opacity: 1;
+    }
+
+    .preferences {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        max-height: 100%;
+        min-height: 560px;
+        line-height: 30px;
+        color: #333;
+    }
+
+    .preferences .navigation {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        border-radius: 10px 0 0 10px;
+        border-right: 1px solid #eee;
+        background: #fafafa;
+        padding: 20px 10px;
+        margin: 0;
+    }
+
+    .preferences .navigation li {
+        padding: 2px 10px;
+        border-radius: 3px;
+        margin-bottom: 4px;
+        line-height: 30px;
+    }
+
+    .preferences .navigation li:hover {
+        background: rgba(100, 100, 100, 0.07);
+    }
+
+    .preferences .navigation li.current {
+        color: #fff;
+        background: #4792ff;
+    }
+
+    .preferences .body {
+        flex: 3;
+        padding: 10px 20px 20px 20px;
+        overflow-y: auto;
+        max-height: 100%;
+    }
+
+    .preferences .body h1 {
+        padding-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .preferences .body .section {
+        margin-bottom: 20px;
+    }
+
+    .preferences .body .button {
+        position: relative;
+        line-height: 12px;
+        background: #b2bec3;
+    }
+
+    .preferences .body .button.iconed {
+        padding-left: 35px;
+    }
+
+    .preferences .body .button.danger {
+        background: #d63031;
+    }
+
+    .preferences .body .button svg {
+        position: absolute;
+        top: 6px;
+        left: 10px;
+    }
+
+    .preferences .body .button path {
+        fill: #fff;
+    }
+
+    .preferences .body input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    .preferences .body .pass-count {
+        display: inline-block;
+        margin: 0 10px;
+        line-height: 22px;
+        border-radius: 3px;
+        width: 26px;
+        text-align: center;
+        background: #4792ff;
+        color: #fff;
+    }
+
+    .preferences .body .password-sample {
+        font-size: 18px;
+        font-family: monospace;
+        background: #efefef;
+        border-radius: 4px;
+        padding: 2px 10px;
+        max-width: 250px;
+    }
+
+    .dropdown-overlay {
+        position: fixed;
+        z-index: 10;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .dropdown {
+        position: absolute;
+        z-index: 11;
+        background: #fff;
+        border: 1px solid #E3E4E5;
+        box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        line-height: 18px;
+    }
+
+    .dropdown .dropdown-item {
+        text-align: left;
+        padding: 10px 15px;
+        cursor: pointer;
+        color: #333;
+        min-width: 160px;
+    }
+
+    .dropdown .dropdown-item.separated {
+        border-top: 1px solid #E3E4E5;
+    }
+
+    .dropdown .dropdown-item:hover {
+        background: #fafafa;
+    }
+
+    .dropdown .dropdown-item svg {
+        margin-right: 10px;
+        margin-bottom: -2px;
+    }
+
+    .dropdown .dropdown-item svg path {
+        fill: #333;
+    }
+
+    .sync-indicator {
+        position: absolute;
+        right: 15px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f5f5f5;
+    }
+
+    .sync-indicator svg {
+        position: absolute;
+    }
+
+    .sync-indicator .success-icon {
+        position: absolute;
+        top: 2px;
+        right: -2px;
+    }
+
+    .sync-indicator .error-icon {
+        position: absolute;
+        top: 2px;
+        right: 3px;
+    }
+
+    .sync-indicator .monochrome path {
+        fill: #4792ff;
+    }
+
+    .sync-indicator .spinner,
+    .sync-indicator .spinner:after {
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+    }
+
+    .sync-indicator .spinner {
+        font-size: 10px;
+        position: relative;
+        border-width: 2px;
+        border-style: solid;
+        border-color: transparent;
+        transform: translateZ(0);
+    }
+
+    @keyframes load {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .sync-indicator.loading svg path:nth-child(1) {
+        fill: #d7d7d7;
+    }
+
+    .sync-indicator.loading svg path:nth-child(2) {
+        fill: #c6c6c6;
+    }
+
+    .sync-indicator.loading svg path:nth-child(3) {
+        fill: #e9e8e6;
+    }
+
+    .sync-indicator.loading .spinner {
+        animation: load 1.1s infinite linear;
+        border-top: 2px solid rgba(71, 146, 255, 0.3);
+        border-right: 2px solid rgba(71, 146, 255, 0.3);
+        border-bottom: 2px solid rgba(71, 146, 255, 0.3);
+        border-left: 2px solid rgba(71, 146, 255, 0.7);
+    }
+
+    .sync-indicator.static .error-icon,
+    .sync-indicator.static .success-icon {
+        display: none;
+    }
+    </style>
+</head>
+<body>
+
+
+<div class="draggable"></div>
+
+
+<div id="root">
+    <div class="layout">
+        <div class="sidebar">
+            <div class="add-button">
+                <svg width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.7 14.7v4.784c0 .44-.312.796-.7.796-.386 0-.7-.356-.7-.796V14.7H8.497c-.44 0-.797-.312-.797-.7 0-.386.356-.7.797-.7H13.3V8.497c0-.44.314-.797.7-.797.387 0 .7.357.7.797V13.3h4.784c.44 0 .796.314.796.7 0 .388-.356.7-.796.7H14.7zM14 28C6.28 28 0 21.72 0 14S6.28 0 14 0s14 6.28 14 14-6.28 14-14 14zm0-26.6C7.052 1.4 1.4 7.053 1.4 14c0 6.948 5.652 12.6 12.6 12.6 6.948 0 12.6-5.652 12.6-12.6 0-6.947-5.652-12.6-12.6-12.6z"
+                          fill="#000" fill-rule="nonzero"></path>
+                </svg>
+            </div>
+            <div class="switcher">
+                <div class="item current" title="Git">
+                    <svg t="1569591755276" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="1108" width="32" height="32">
+                        <path d="M1004.628512 466.345889L557.525257 19.285301a66.133223 66.133223 0 0 0-93.354511 0L371.541567 112.085147l117.759804 117.759803a78.421203 78.421203 0 0 1 99.285168 99.8825l113.407811 113.493145a78.421203 78.421203 0 0 1 81.066532 129.663784 78.378536 78.378536 0 0 1-110.933149 0 78.762535 78.762535 0 0 1-17.237304-85.162525L548.693272 382.079363v278.399536c7.509321 3.669327 14.591976 8.661319 20.821299 14.847975a78.847869 78.847869 0 0 1 0 110.933149 78.677202 78.677202 0 0 1-111.317148 0 78.250536 78.250536 0 0 1 0-110.847815c7.76532-7.679987 16.511972-13.482644 25.81329-17.322638V376.959372a78.250536 78.250536 0 0 1-42.495929-102.826496L325.802977 157.866404 19.200821 464.255226c-25.599957 25.81329-25.599957 67.583887 0 93.397178l447.145922 447.017922a65.91989 65.91989 0 0 0 93.269178 0l445.012591-445.012592a65.877224 65.877224 0 0 0 0-93.311845"
+                              fill="#ffffff" p-id="1109"></path>
+                    </svg>
+                </div>
+                <div class="item" title="SQL">
+                    <svg t="1569592157829" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="2320" width="32" height="32">
+                        <path d="M930.816 1012.736H248.32c-46.08 0-82.944-37.376-82.944-82.944V247.296c0-46.08 37.376-82.944 82.944-82.944h681.984c46.08 0 82.944 37.376 82.944 82.944v681.984c0.512 46.08-36.864 83.456-82.432 83.456zM248.32 227.84c-10.752 0-19.456 8.704-19.456 19.456v681.984c0 10.752 8.704 19.456 19.456 19.456h681.984c10.752 0 19.456-8.704 19.456-19.456V247.296c0-10.752-8.704-19.456-19.456-19.456H248.32z"
+                              p-id="2321" fill="#2c2c2c"></path>
+                        <path d="M168.96 856.576c-87.552 0-158.72-71.168-158.72-158.72V91.648c0-46.08 37.376-82.944 82.944-82.944h606.72c87.552 0 158.72 71.168 158.72 158.72h-64c0-52.224-42.496-94.72-94.72-94.72H93.184c-10.752 0-19.456 8.704-19.456 19.456v606.72c0 52.224 42.496 94.72 94.72 94.72v62.976z"
+                              p-id="2322" fill="#2c2c2c"></path>
+                        <path d="M415.744 570.88c-37.376-24.576-54.784-36.352-54.784-51.2 0-15.36 14.336-15.872 22.528-15.36 8.704 0.512 71.168 0.512 71.168 0.512V455.68H359.424c-15.872 0-47.104 18.432-55.808 48.128-5.632 20.48 2.56 40.448 4.096 44.544 2.56 6.144 7.168 15.36 19.968 28.16 34.816 35.84 72.704 41.472 77.312 64 0.512 2.048 1.536 7.68-1.536 12.8-4.096 6.656-13.312 9.216-19.456 9.216H302.592v51.2s59.392 0.512 94.72 0 64.512-29.696 64.512-64.512-9.216-53.76-46.08-78.336zM606.72 451.072c-71.68 0-130.048 59.904-130.048 133.632 0 54.784 31.744 103.424 81.408 123.904l17.92-43.52c-31.744-13.312-52.736-45.056-52.736-80.896 0-47.616 37.376-86.528 83.456-86.528s83.456 38.912 83.456 86.528c0 35.84-20.992 67.072-51.712 80.384v-46.592h-46.592v152.064h46.592v-56.32c58.368-14.848 98.816-67.584 98.816-129.536-0.512-73.216-58.88-133.12-130.56-133.12zM829.44 665.088c-14.336 0-26.112-11.776-26.112-26.112V455.68h-46.592v183.296c0 39.936 32.768 72.704 72.704 72.704h47.104v-46.592H829.44z"
+                              p-id="2323" fill="#2c2c2c"></path>
+                    </svg>
+                </div>
+                <div class="item" title="SSH">
+                    <svg t="1569593119275" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="7958" width="32" height="32">
+                        <path d="M512 640h256v64H512v-64z m-192 64l192-192-192-192-48 48L416 512l-144 144L320 704z m640-512v640c0 35.2-28.8 64-64 64H128c-35.2 0-64-28.8-64-64V192c0-35.2 28.8-64 64-64h768c35.2 0 64 28.8 64 64z m-64 0H128v640h768V192z"
+                              fill="" p-id="7959"></path>
+                    </svg>
+                </div>
+                <div class="item" title="FTP">
+                    <svg t="1569592740003" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="4848" width="32" height="32">
+                        <path d="M796.444444 633.362963h64.474075V568.888889H796.444444z" p-id="4849"></path>
+                        <path d="M796.444444 441.344v-252.207407L606.814815 0H37.925926v1008.82963h758.518518v-126.103704h189.62963V441.344h-189.62963z m-252.852148-378.311111h37.925926l151.703704 151.324444v37.850074h-189.62963V63.032889z m189.62963 882.763852H101.148444V63.032889h379.25926v252.207407h252.814222v126.103704h-568.888889v441.381926h568.888889v63.070815z m-252.814222-378.311111V504.414815h189.629629v63.070815H606.814815v252.207407h-63.222519v-252.207407h-63.184592zM417.185185 630.518519v63.032888H290.778074v126.14163H227.555556V504.414815h189.629629v63.070815H290.778074v63.032889H417.185185z m505.666371-63.032889v126.065777H796.444444v126.14163h-63.222518V504.414815h189.62963v63.070815z"
+                              p-id="4850"></path>
+                    </svg>
+                </div>
+                <div class="item" title="SVN">
+                    <svg t="1569592811761" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="5599" width="32" height="32">
+                        <path d="M1004.390349 263.71584c-42.5984-69.8624-131.92704-92.63616-208.29184-48.54784-107.2896 61.93664-41.49248 227.5072-131.00544 294.88128-0.35328-64.10752-21.25824-122.76224-57.44128-168.35584-46.03392-57.99936-116.80256-94.848-201.4464-94.848-85.90336 0-153.5744 45.45536-197.5552 113.42848-33.41824 51.64544-53.16096 116.29056-56.82688 183.86432-62.2592 19.6608-116.54144-24.0896-148.2752-70.56896-30.0032 184.47872 139.61728 177.8176 167.43424 180.66944 24.17664 2.4832-47.15008 156.45696-5.79072 183.53152 33.05472 21.632 138.73664 19.49184 160.4608-0.25088 26.64448-24.22272 8.27392-97.74592-4.29056-163.88096 82.39616 3.44576 108.96384 4.8128 190.9504-3.56864-8.95488 87.16288-40.32 146.87744-0.3072 169.76384 27.18208 15.54432 139.61728 14.1312 167.69536-14.36672 27.56608-27.97568-36.09088-153.49248-5.16608-177.408 127.03232-98.24768 125.39392-171.65824 177.28512-201.70752 35.59936-20.61824 113.1264 6.0928 154.16832-46.48448 27.58656-35.33824 20.64384-99.66592-1.59744-136.15104z"
+                              fill="" p-id="5600"></path>
+                    </svg>
+                </div>
+                <div class="item" title="WEBSITE">
+                    <svg t="1569593441210" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="10853" width="32" height="32">
+                        <path d="M931.2 912H96c-35.2 0-64-28.8-64-64v-672c0-35.2 28.8-64 64-64h832c35.2 0 64 28.8 64 64v675.2c0 35.2-25.6 60.8-60.8 60.8zM96 176v672h835.2v-672H96z"
+                              p-id="10854"></path>
+                        <path d="M928 384H96c-19.2 0-32-12.8-32-32s12.8-32 32-32h832c19.2 0 32 12.8 32 32s-12.8 32-32 32z"
+                              p-id="10855"></path>
+                        <path d="M224 384c-19.2 0-32-12.8-32-32V160c0-19.2 12.8-32 32-32s32 12.8 32 32v192c0 19.2-12.8 32-32 32zM384 384c-19.2 0-32-12.8-32-32V160c0-19.2 12.8-32 32-32s32 12.8 32 32v192c0 19.2-12.8 32-32 32zM544 384c-19.2 0-32-12.8-32-32V160c0-19.2 12.8-32 32-32s32 12.8 32 32v192c0 19.2-12.8 32-32 32zM384 544H192c-19.2 0-32-12.8-32-32s12.8-32 32-32h192c19.2 0 32 12.8 32 32s-12.8 32-32 32zM672 704H192c-19.2 0-32-12.8-32-32s12.8-32 32-32h480c19.2 0 32 12.8 32 32s-12.8 32-32 32z"
+                              p-id="10856"></path>
+                    </svg>
+                </div>
+                <div class="item" title="NOTE">
+                    <svg t="1569594149952" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="26792" width="32" height="32">
+                        <path d="M256 640h256V576H256v64z m0-128h384V448H256v64z m0-128h512V320H256v64z m640 384H128V192h768v576zM128 128c-35.2 0-64 28.8-64 64v576c0 35.2 28.8 64 64 64h768c35.2 0 64-28.8 64-64V192c0-35.2-28.8-64-64-64H128z"
+                              fill="#000000" p-id="26793"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="settings">
+                <div>
+                    <svg width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M26.752 11.516a85.695 85.695 0 00-1.607-.225.159.159 0 01-.135-.113 11.364 11.364 0 00-1.074-2.592.16.16 0 01.015-.176c.332-.431.661-.867.978-1.295.428-.579.366-1.4-.144-1.91l-1.77-1.77a1.476 1.476 0 00-1.91-.144c-.428.316-.863.645-1.296.977a.16.16 0 01-.176.015 11.365 11.365 0 00-2.591-1.074.159.159 0 01-.113-.135 86.84 86.84 0 00-.225-1.606A1.476 1.476 0 0015.252.22h-2.504c-.721 0-1.345.536-1.452 1.248a86.392 86.392 0 00-.225 1.607.159.159 0 01-.113.134c-.903.25-1.775.61-2.591 1.074a.16.16 0 01-.176-.015 86.187 86.187 0 00-1.296-.977 1.476 1.476 0 00-1.91.144l-1.77 1.77a1.476 1.476 0 00-.144 1.91c.318.429.646.865.978 1.295a.16.16 0 01.015.176 11.365 11.365 0 00-1.074 2.592.159.159 0 01-.135.113c-.54.07-1.08.146-1.607.225A1.476 1.476 0 000 12.968v2.503c0 .722.537 1.346 1.248 1.453.527.078 1.068.154 1.607.224a.159.159 0 01.135.113c.249.904.61 1.776 1.074 2.592a.16.16 0 01-.015.176c-.332.432-.661.868-.978 1.296-.428.578-.366 1.4.144 1.91l1.77 1.77c.51.51 1.332.572 1.91.144.428-.317.863-.646 1.296-.978a.16.16 0 01.176-.015c.816.464 1.688.825 2.591 1.074.06.016.105.07.113.135.07.54.146 1.08.225 1.606.107.712.73 1.249 1.452 1.249h2.504c.721 0 1.345-.537 1.452-1.249.079-.526.154-1.067.225-1.606a.159.159 0 01.113-.135 11.37 11.37 0 002.591-1.074.16.16 0 01.176.015c.432.332.868.661 1.296.977.578.428 1.4.366 1.91-.144l1.77-1.77c.51-.51.572-1.331.144-1.91a87.928 87.928 0 00-.978-1.295.16.16 0 01-.015-.176c.464-.816.825-1.688 1.074-2.592a.16.16 0 01.135-.113c.54-.07 1.08-.146 1.607-.225A1.476 1.476 0 0028 15.471v-2.503c0-.721-.537-1.346-1.248-1.452zm-.06 3.955a.16.16 0 01-.134.16c-.518.077-1.05.152-1.582.221a1.463 1.463 0 00-1.226 1.062c-.22.8-.54 1.571-.95 2.293a1.464 1.464 0 00.115 1.62c.327.424.65.854.963 1.275a.16.16 0 01-.018.208l-1.77 1.77a.16.16 0 01-.207.018c-.421-.312-.85-.636-1.276-.963a1.464 1.464 0 00-1.62-.116c-.722.41-1.493.73-2.293.95a1.464 1.464 0 00-1.062 1.227c-.07.532-.144 1.064-.221 1.582a.16.16 0 01-.16.134h-2.503a.16.16 0 01-.159-.134 85.73 85.73 0 01-.221-1.582 1.464 1.464 0 00-1.062-1.226c-.8-.22-1.571-.54-2.293-.95a1.46 1.46 0 00-1.62.115c-.425.327-.855.651-1.276.963a.16.16 0 01-.207-.018l-1.77-1.77a.16.16 0 01-.018-.207c.312-.422.636-.851.963-1.276.362-.47.407-1.106.116-1.62-.41-.722-.73-1.493-.95-2.293a1.464 1.464 0 00-1.227-1.062 86.1 86.1 0 01-1.582-.221.16.16 0 01-.135-.16v-2.503a.16.16 0 01.135-.159 85.683 85.683 0 011.582-.221 1.463 1.463 0 001.226-1.062c.22-.8.54-1.571.95-2.294a1.464 1.464 0 00-.115-1.619c-.326-.424-.65-.853-.963-1.276a.16.16 0 01.018-.207l1.77-1.77a.16.16 0 01.207-.018c.421.311.85.635 1.276.963.47.362 1.106.407 1.62.115.722-.41 1.493-.73 2.293-.95a1.464 1.464 0 001.062-1.226c.07-.533.144-1.065.221-1.583a.16.16 0 01.16-.134h2.503a.16.16 0 01.159.134c.077.518.152 1.05.221 1.583.077.588.494 1.07 1.062 1.226.8.22 1.571.54 2.294.95a1.464 1.464 0 001.619-.115c.425-.328.855-.652 1.276-.963a.16.16 0 01.207.018l1.77 1.77a.16.16 0 01.018.207c-.312.422-.636.851-.963 1.276a1.465 1.465 0 00-.115 1.62c.41.722.73 1.493.95 2.293.157.568.638.985 1.226 1.062.532.069 1.064.143 1.583.221a.16.16 0 01.134.16v2.502zM14 8.142a6.085 6.085 0 00-6.078 6.078A6.085 6.085 0 0014 20.297a6.085 6.085 0 006.078-6.077A6.085 6.085 0 0014 8.142zm0 10.848c-2.63 0-4.77-2.14-4.77-4.77 0-2.63 2.14-4.77 4.77-4.77 2.63 0 4.77 2.14 4.77 4.77 0 2.63-2.14 4.77-4.77 4.77z"
+                              fill="#000" fill-rule="nonzero"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="mainbar">
+            <div class="header">
+                <div class="search">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129" width="16" height="16">
+                        <path d="M51.6 96.7c11 0 21-3.9 28.8-10.5l35 35c.8.8 1.8 1.2 2.9 1.2s2.1-.4 2.9-1.2c1.6-1.6 1.6-4.2 0-5.8l-35-35c6.5-7.8 10.5-17.9 10.5-28.8 0-24.9-20.2-45.1-45.1-45.1-24.8 0-45.1 20.3-45.1 45.1 0 24.9 20.3 45.1 45.1 45.1zm0-82c20.4 0 36.9 16.6 36.9 36.9C88.5 72 72 88.5 51.6 88.5S14.7 71.9 14.7 51.6c0-20.3 16.6-36.9 36.9-36.9z"></path>
+                    </svg>
+                    <input type="text" placeholder="Search"></div>
+                <div class="sync-indicator static">
+                    <div class="spinner"></div>
+                    <svg t="1569594754516" class="icon" viewBox="0 0 1200 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="5083" width="32" height="32">
+                        <path d="M925.060 918.59c68.107-0.002 132.134-26.511 180.293-74.643 48.159-48.133 74.683-112.131 74.683-180.204 0-55.481-17.529-108.221-50.689-152.521-30.74-41.065-73.98-72.431-122.313-88.859 0.193-2.928 0.364-5.94 0.364-9.053 0-78.626-30.636-152.546-86.262-208.144-55.627-55.596-129.585-86.214-208.252-86.214-97.387 0-187.719 47.74-242.828 128.006-14.491-3.328-28.933-5.012-43.015-5.012-95.53 0-176.814 69.996-191.427 163.765-54.596 13.537-104.009 44.917-139.659 88.814-37.433 46.095-58.048 104.239-58.048 163.719 0 69.54 27.095 134.917 76.294 184.089 47.953 47.926 111.308 74.865 178.909 76.201v0.052M570.986 918.005c0.021-70.8-0.361-282.244-3.826-308.78-2.433-18.606-19.881-35.99-21.861-37.911l-0.978-0.948-42.78-20.436-0.798-0.331c-1.258-0.466-4.983-2.422-5.582-5.213-0.29-1.351-0.444-6.542 9.746-16.564 11.482-11.286 100.45-102.256 104.231-106.124l0.251-0.268c3.039-3.393 6.267-5.042 9.868-5.042 6.057 0 12.319 4.528 14.294 6.331 3.463 3.511 72.789 73.755 105.025 105.989 9.747 9.747 9.893 14.946 9.503 16.729-0.671 3.065-4.669 5.213-6.046 5.747-4.197 1.303-33.292 10.56-45.888 20.429-9.601 7.526-17.919 30.891-19.489 35.498l-0.448 1.313 0.412 309.582M925.269 852.748c-0.26-0.017-0.522-0.030-0.785-0.030h-8.332v1.018h-187.201l0.26-215.773c0.17-6.691 2.999-26.236 13.555-29.844 8.366-2.862 43.957-13.54 44.315-13.65l0.724-0.218 0.673-0.345c1.011-0.516 24.787-12.921 28.46-36.222 2.407-15.281-4.27-30.93-19.853-46.511-53.198-53.197-139.485-142.365-140.351-143.259l-0.257-0.254c-0.704-0.668-17.481-16.342-38.273-16.342-12.173 0-22.981 5.15-32.127 15.308-4.285 4.422-123.634 127.577-141.819 145.457-14.902 14.654-21.104 29.451-18.431 43.98 4.509 24.521 33.167 37.345 34.386 37.881l37.369 13.923 0.135 0.257 0.886 0.080c1.517 0.687 11.056 6.034 13.551 32.492 2.832 30.020 2.793 153.066 2.592 213.039h-213.804v-0.334l-8.097-0.228c-51.009-1.434-98.734-22.334-134.382-58.85-35.73-36.597-55.406-84.925-55.406-136.076 0-50.955 19.548-99.143 55.043-135.691 35.401-36.449 82.857-57.467 133.629-59.18l9.266-0.313-1.636-11.537c-0.784-5.431-1.524-10.562-1.524-15.764 0-71.2 57.961-129.126 129.204-129.126 22.583 0 44.448 6.109 64.987 18.155l8.051 4.723 3.781-8.535c36.643-82.721 118.691-136.172 209.026-136.172 126.068 0 228.631 102.506 228.631 228.501 0 18.381-2.469 37.387-7.339 56.489l-2.422 9.503 9.77 0.853c46.358 4.054 89.322 25.18 120.971 59.489 31.844 34.516 49.38 79.404 49.38 126.391 0 102.887-83.69 186.603-186.609 186.716z"
+                              p-id="5084"></path>
+                        <path d="M570.986 918.005h105.76v1.205h-105.76v-1.205z" p-id="5085"></path>
+                    </svg>
+                </div>
+            </div>
+
+
+            <div class="body">
+                <div class="list">
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/git/github.svg" alt="github">
+                        </div>
+                        <div class="description">
+                            <div class="primary">github</div>
+                            <div class="secondary">deve-1</div>
+                        </div>
+                    </div>
+
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/git/gitlab.svg" alt="gitlab">
+                        </div>
+                        <div class="description">
+                            <div class="primary">gitlab</div>
+                            <div class="secondary">test-1</div>
+                        </div>
+                    </div>
+
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/git/gitee.svg" alt="gitee">
+                        </div>
+                        <div class="description">
+                            <div class="primary">gitee</div>
+                            <div class="secondary">deve-2</div>
+                        </div>
+                    </div>
+
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/git/gogs.svg" alt="gogs">
+                        </div>
+                        <div class="description">
+                            <div class="primary">gogs</div>
+                            <div class="secondary">official</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/git/other.svg" alt="other">
+                        </div>
+                        <div class="description">
+                            <div class="primary">other</div>
+                            <div class="secondary">deve</div>
+                        </div>
+                    </div>
+
+
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/mysql.svg" alt="mysql">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Mysql</div>
+                            <div class="secondary">5.7</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/sqlserver.svg" alt="sqlserver">
+                        </div>
+                        <div class="description">
+                            <div class="primary">SqlServer</div>
+                            <div class="secondary">6.2.53</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/oracle.svg" alt="oracle">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Oracle</div>
+                            <div class="secondary">3.2.239</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/postgresql.svg" alt="postgresql">
+                        </div>
+                        <div class="description">
+                            <div class="primary">PostgreSql</div>
+                            <div class="secondary">5.7.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/mongodb.svg" alt="mongodb">
+                        </div>
+                        <div class="description">
+                            <div class="primary">MongoDB</div>
+                            <div class="secondary">12.7.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/db2.svg" alt="db2">
+                        </div>
+                        <div class="description">
+                            <div class="primary">DB2</div>
+                            <div class="secondary">1.7.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/access.svg" alt="access">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Access</div>
+                            <div class="secondary">2.4.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/sqlite.svg" alt="sqlite">
+                        </div>
+                        <div class="description">
+                            <div class="primary">SQLite</div>
+                            <div class="secondary">8.11.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/sql/redis.svg" alt="redis">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Redis</div>
+                            <div class="secondary">4.7.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/centos.svg" alt="centos">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Centos</div>
+                            <div class="secondary">14.7.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/debian.svg" alt="debian">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Debian</div>
+                            <div class="secondary">2.7.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/ubuntu.svg" alt="ubuntu">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Ubuntu</div>
+                            <div class="secondary">16.04.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/red-hat.svg" alt="red-hat">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Redhat</div>
+                            <div class="secondary">1.04.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/fedora.svg" alt="fedora">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Fedora</div>
+                            <div class="secondary">1.04.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/linux.svg" alt="linux">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Linux</div>
+                            <div class="secondary">1.04.2</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/windows.svg" alt="windows">
+                        </div>
+                        <div class="description">
+                            <div class="primary">Windows</div>
+                            <div class="secondary">10.122.12</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/suse.svg" alt="suse">
+                        </div>
+                        <div class="description">
+                            <div class="primary">SUSE</div>
+                            <div class="secondary">10.122.12</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/coreos.svg" alt="coreos">
+                        </div>
+                        <div class="description">
+                            <div class="primary">CoreOS</div>
+                            <div class="secondary">12.122.12</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ssh/freebsd.svg" alt="freebsd">
+                        </div>
+                        <div class="description">
+                            <div class="primary">FreeBSD</div>
+                            <div class="secondary">6.1</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ftp/ftp.svg" alt="ftp">
+                        </div>
+                        <div class="description">
+                            <div class="primary">FTP</div>
+                            <div class="secondary">20</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/ftp/sftp.svg" alt="sftp">
+                        </div>
+                        <div class="description">
+                            <div class="primary">SFTP</div>
+                            <div class="secondary">21</div>
+                        </div>
+                    </div>
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/svn/svn.svg" alt="svn">
+                        </div>
+                        <div class="description">
+                            <div class="primary">SVN</div>
+                            <div class="secondary">16.9</div>
+                        </div>
+                    </div>
+
+                    <div class="entry">
+                        <div class="icon web">
+                            <img src="./list/note/note.svg" alt="">
+                        </div>
+                        <div class="description">
+                            <div class="primary">NOTE</div>
+                            <div class="secondary">....</div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="aside">
+                    <div class="empty">
+                        <img src="./body/safe-tip.svg" alt="safe-tip">
+                        <p>创建你的第一个开发管理账号</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="./javascripts/jquery.min.js" type="text/javascript"></script>
+<script src="./javascripts/sidebar.js" type="text/javascript"></script>
+
+</html>
