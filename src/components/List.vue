@@ -1,52 +1,54 @@
 <template>
-<!--    <div class="entry">-->
-<!--        <div class="icon web">-->
-<!--            <img src="../assets/list/git/github.svg" alt="github">-->
-<!--        </div>-->
-<!--        <div class="description">-->
-<!--            <div class="primary">github</div>-->
-<!--            <div class="secondary">deve-1</div>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="list">
+        <div class="entry">
+            <div class="icon web">
+                <img src="../assets/list/git/github.svg" alt="github">
+            </div>
+            <div class="description">
+                <div class="primary">github</div>
+                <div class="secondary">deve-1</div>
+            </div>
+        </div>
 
-<!--    <div class="entry">-->
-<!--        <div class="icon web">-->
-<!--            <img src="../assets/list/git/gitlab.svg" alt="gitlab">-->
-<!--        </div>-->
-<!--        <div class="description">-->
-<!--            <div class="primary">gitlab</div>-->
-<!--            <div class="secondary">test-1</div>-->
-<!--        </div>-->
-<!--    </div>-->
+        <div class="entry">
+            <div class="icon web">
+                <img src="../assets/list/git/gitlab.svg" alt="gitlab">
+            </div>
+            <div class="description">
+                <div class="primary">gitlab</div>
+                <div class="secondary">test-1</div>
+            </div>
+        </div>
 
-<!--    <div class="entry">-->
-<!--        <div class="icon web">-->
-<!--            <img src="./list/git/gitee.svg" alt="gitee">-->
-<!--        </div>-->
-<!--        <div class="description">-->
-<!--            <div class="primary">gitee</div>-->
-<!--            <div class="secondary">deve-2</div>-->
-<!--        </div>-->
-<!--    </div>-->
+        <div class="entry">
+            <div class="icon web">
+                <img src="../assets/list/git/gitee.svg" alt="gitee">
+            </div>
+            <div class="description">
+                <div class="primary">gitee</div>
+                <div class="secondary">deve-2</div>
+            </div>
+        </div>
 
-<!--    <div class="entry">-->
-<!--        <div class="icon web">-->
-<!--            <img src="./list/git/gogs.svg" alt="gogs">-->
-<!--        </div>-->
-<!--        <div class="description">-->
-<!--            <div class="primary">gogs</div>-->
-<!--            <div class="secondary">official</div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="entry">-->
-<!--        <div class="icon web">-->
-<!--            <img src="./list/git/other.svg" alt="other">-->
-<!--        </div>-->
-<!--        <div class="description">-->
-<!--            <div class="primary">other</div>-->
-<!--            <div class="secondary">deve</div>-->
-<!--        </div>-->
-<!--    </div>-->
+        <div class="entry">
+            <div class="icon web">
+                <img src="../assets/list/git/gogs.svg" alt="gogs">
+            </div>
+            <div class="description">
+                <div class="primary">gogs</div>
+                <div class="secondary">official</div>
+            </div>
+        </div>
+
+        <div class="entry">
+            <div class="icon web">
+                <img src="../assets/list/git/other.svg" alt="other">
+            </div>
+            <div class="description">
+                <div class="primary">other</div>
+                <div class="secondary">deve</div>
+            </div>
+        </div>
 
 
 <!--    <div class="entry">-->
@@ -257,11 +259,13 @@
 <!--            <div class="secondary">....</div>-->
 <!--        </div>-->
 <!--    </div>-->
+    </div>
 </template>
 
 <script>
     export default {
         name: 'List',
+        props: ['title'],
         data () {
             return {
 
