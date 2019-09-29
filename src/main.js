@@ -19,9 +19,26 @@ $('.item').click(function() {
     $(this).addClass('current').siblings('.item').removeClass('current');
 });
 
+
+let data = [
+    {
+        'icon': 'git',
+        'primary': 'github',
+        'secondary': 'deve',
+    },
+    {
+        'icon': 'git',
+        'primary': 'gitlab',
+        'secondary': 'test',
+    },
+    {
+        'icon': 'git',
+        'primary': 'gogs',
+        'secondary': 'test-1',
+    },
+];
+
+
 Vue.component('app', {
     template: '<App/>',
-    data: function () {
-         return switcher;
-  }
 })
